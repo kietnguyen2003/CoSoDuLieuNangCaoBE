@@ -1,0 +1,50 @@
+[
+  {
+    "MaThuoc": "MED001",
+    "TenThuoc": "Paracetamol",
+    "DonVi": "Viên",
+    "Gia": 500.00,
+    "CongDung": "Giảm đau, hạ sốt",
+    "LieuLuong": "1-2 viên/lần, 3-4 lần/ngày"
+  },
+  {
+    "MaThuoc": "MED002", 
+    "TenThuoc": "Amoxicillin",
+    "DonVi": "Viên",
+    "Gia": 2500.00,
+    "CongDung": "Kháng sinh điều trị nhiễm khuẩn",
+    "LieuLuong": "1 viên/lần, 3 lần/ngày"
+  },
+  {
+    "MaThuoc": "MED003",
+    "TenThuoc": "Vitamin C",
+    "DonVi": "Viên",
+    "Gia": 800.00,
+    "CongDung": "Bổ sung vitamin C, tăng cường miễn dịch",
+    "LieuLuong": "1 viên/ngày"
+  },
+  {
+    "MaThuoc": "MED004",
+    "TenThuoc": "Ibuprofen",
+    "DonVi": "Viên",
+    "Gia": 1200.00,
+    "CongDung": "Giảm đau, chống viêm",
+    "LieuLuong": "1 viên/lần, 2-3 lần/ngày"
+  },
+  {
+    "MaThuoc": "MED005",
+    "TenThuoc": "Omeprazole",
+    "DonVi": "Viên",
+    "Gia": 3500.00,
+    "CongDung": "Điều trị loét dạ dày, trào ngược dạ dày",
+    "LieuLuong": "1 viên/ngày, uống trước bữa ăn"
+  },
+  {
+    "MaThuoc": "MED006",
+    "TenThuoc": "Cefixime",
+    "DonVi": "Viên",
+    "Gia": 4500.00,
+    "CongDung": "Kháng sinh điều trị nhiễm khuẩn đường hô hấp",
+    "LieuLuong": "1 viên/lần, 2 lần/ngày"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "MaHoSo": "MR001",
+    "MaCustomer": "USER003",
+    "MaBacSi": "DOC001",
+    "MaPhongKham": "PK001",
+    "NgayKham": "2024-08-24T14:00:00Z",
+    "TrieuChung": "Đau ngực, khó thở, mệt mỏi",
+    "ChanDoan": "Rối loạn nhịp tim",
+    "HuongDanDieuTri": "Nghỉ ngơi, uống thuốc theo đơn, tái khám sau 2 tuần",
+    "MaICD10": "I49.9",
+    "NgayTaiKham": "2024-09-07T14:00:00Z"
+  },
+  {
+    "MaHoSo": "MR002",
+    "MaCustomer": "USER005",
+    "MaBacSi": "DOC005",
+    "MaPhongKham": "PK005",
+    "NgayKham": "2024-08-23T15:30:00Z",
+    "TrieuChung": "Mụn trứng cá nhiều, da nhờn",
+    "ChanDoan": "Mụn trứng cá thông thường",
+    "HuongDanDieuTri": "Rửa mặt sạch sẽ, bôi kem trị mụn, kiêng đồ ngọt",
+    "MaICD10": "L70.0",
+    "NgayTaiKham": "2024-09-23T15:30:00Z"
+  },
+  {
+    "MaHoSo": "MR003",
+    "MaCustomer": "USER001",
+    "MaBacSi": "DOC001",
+    "MaPhongKham": "PK001",
+    "NgayKham": "2024-08-20T09:30:00Z",
+    "TrieuChung": "Đau đầu, choáng váng",
+    "ChanDoan": "Tăng huyết áp độ 1",
+    "HuongDanDieuTri": "Ăn ít muối, tập thể dục nhẹ, uống thuốc hạ áp",
+    "MaICD10": "I10",
+    "NgayTaiKham": "2024-09-20T09:30:00Z"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "MaUser": "DOC001",
+    "ChuyenKhoa": "Tim mạch",
+    "NamKinhNghiem": 15,
+    "BangCap": "Thạc sĩ Y khoa - Đại học Y Dược TP.HCM",
+    "SoGiayPhepHanhNghe": "BS001-2024-TPHCM"
+  },
+  {
+    "MaUser": "DOC002", 
+    "ChuyenKhoa": "Sản phụ khoa",
+    "NamKinhNghiem": 12,
+    "BangCap": "Tiến sĩ Y khoa - Đại học Y Hà Nội",
+    "SoGiayPhepHanhNghe": "BS002-2024-TPHCM"
+  },
+  {
+    "MaUser": "DOC003",
+    "ChuyenKhoa": "Nhi khoa",
+    "NamKinhNghiem": 8,
+    "BangCap": "Bác sĩ Y khoa - Đại học Y Dược Cần Thơ",
+    "SoGiayPhepHanhNghe": "BS003-2024-TPHCM"
+  },
+  {
+    "MaUser": "DOC004",
+    "ChuyenKhoa": "Thần kinh",
+    "NamKinhNghiem": 20,
+    "BangCap": "Tiến sĩ Y khoa - Đại học Y Dược TP.HCM",
+    "SoGiayPhepHanhNghe": "BS004-2024-TPHCM"
+  },
+  {
+    "MaUser": "DOC005",
+    "ChuyenKhoa": "Da liễu",
+    "NamKinhNghiem": 5,
+    "BangCap": "Thạc sĩ Y khoa - Đại học Y Dược Huế",
+    "SoGiayPhepHanhNghe": "BS005-2024-TPHCM"
+  }
+]

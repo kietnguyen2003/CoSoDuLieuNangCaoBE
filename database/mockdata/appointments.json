@@ -1,0 +1,52 @@
+[
+  {
+    "MaLichKham": "APT001",
+    "MaCustomer": "USER001",
+    "MaBacSi": "DOC001",
+    "MaPhongKham": "PK001",
+    "NgayGioKham": "2024-08-25T09:00:00Z",
+    "TrangThai": "DAT_LICH",
+    "GhiChu": "Khám định kỳ tim mạch",
+    "NgayDat": "2024-08-20T10:30:00Z"
+  },
+  {
+    "MaLichKham": "APT002",
+    "MaCustomer": "USER002",
+    "MaBacSi": "DOC002",
+    "MaPhongKham": "PK003",
+    "NgayGioKham": "2024-08-25T10:30:00Z",
+    "TrangThai": "DAT_LICH", 
+    "GhiChu": "Khám thai định kỳ",
+    "NgayDat": "2024-08-21T14:15:00Z"
+  },
+  {
+    "MaLichKham": "APT003",
+    "MaCustomer": "USER003",
+    "MaBacSi": "DOC001",
+    "MaPhongKham": "PK001",
+    "NgayGioKham": "2024-08-24T14:00:00Z",
+    "TrangThai": "HOAN_THANH",
+    "GhiChu": "Tái khám sau phẫu thuật",
+    "NgayDat": "2024-08-18T09:00:00Z"
+  },
+  {
+    "MaLichKham": "APT004",
+    "MaCustomer": "USER004",
+    "MaBacSi": "DOC003",
+    "MaPhongKham": "PK004",
+    "NgayGioKham": "2024-08-26T08:30:00Z",
+    "TrangThai": "DAT_LICH",
+    "GhiChu": "Khám nhi khoa cho bé",
+    "NgayDat": "2024-08-22T11:45:00Z"
+  },
+  {
+    "MaLichKham": "APT005",
+    "MaCustomer": "USER005",
+    "MaBacSi": "DOC005",
+    "MaPhongKham": "PK005",
+    "NgayGioKham": "2024-08-23T15:30:00Z",
+    "TrangThai": "HOAN_THANH",
+    "GhiChu": "Điều trị mụn trứng cá",
+    "NgayDat": "2024-08-19T16:20:00Z"
+  }
+]

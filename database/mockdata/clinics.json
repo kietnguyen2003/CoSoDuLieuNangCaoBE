@@ -1,0 +1,37 @@
+[
+  {
+    "MaPhongKham": "PK001",
+    "TenPhongKham": "Phòng khám Đa khoa Sài Gòn",
+    "DiaChi": "123 Đường Nguyễn Thị Minh Khai, Quận 1, TP.HCM",
+    "SoDienThoai": "028-38220999",
+    "Email": "info@pksakgon.com"
+  },
+  {
+    "MaPhongKham": "PK002",
+    "TenPhongKham": "Phòng khám Tim mạch Thành Đạt",
+    "DiaChi": "456 Đường Lý Tự Trọng, Quận 1, TP.HCM", 
+    "SoDienThoai": "028-38221888",
+    "Email": "contact@timmachchthanhdat.com"
+  },
+  {
+    "MaPhongKham": "PK003",
+    "TenPhongKham": "Phòng khám Sản phụ khoa An Sinh",
+    "DiaChi": "789 Đường Pasteur, Quận 1, TP.HCM",
+    "SoDienThoai": "028-38222777",
+    "Email": "info@sanphukhoansinh.com"
+  },
+  {
+    "MaPhongKham": "PK004",
+    "TenPhongKham": "Phòng khám Nhi Đông Á",
+    "DiaChi": "321 Đường Hai Bà Trưng, Quận 3, TP.HCM",
+    "SoDienThoai": "028-38223666",
+    "Email": "lienhe@nhidonga.com"
+  },
+  {
+    "MaPhongKham": "PK005",
+    "TenPhongKham": "Phòng khám Da liễu Việt Nam",
+    "DiaChi": "654 Đường Điện Biên Phủ, Quận Bình Thạnh, TP.HCM",
+    "SoDienThoai": "028-38224555",
+    "Email": "info@dalieuvietnam.com"
+  }
+]

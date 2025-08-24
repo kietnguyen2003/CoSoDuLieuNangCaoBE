@@ -1,0 +1,14 @@
+[
+  {
+    "MaUser": "ACC001",
+    "LuongCoBan": 15000000.00,
+    "NgayVaoLam": "2024-01-05",
+    "ChuyenMon": "Kế toán tài chính"
+  },
+  {
+    "MaUser": "ACC002", 
+    "LuongCoBan": 12000000.00,
+    "NgayVaoLam": "2024-01-15",
+    "ChuyenMon": "Kế toán quản trị"
+  }
+]

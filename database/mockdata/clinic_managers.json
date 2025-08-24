@@ -1,0 +1,14 @@
+[
+  {
+    "MaUser": "MAN001",
+    "MaPhongKham": "PK001",
+    "LuongCoBan": 25000000.00,
+    "NgayVaoLam": "2024-01-01"
+  },
+  {
+    "MaUser": "MAN002",
+    "MaPhongKham": "PK002", 
+    "LuongCoBan": 22000000.00,
+    "NgayVaoLam": "2024-01-01"
+  }
+]
