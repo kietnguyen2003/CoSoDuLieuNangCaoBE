@@ -13,7 +13,7 @@ type Config struct {
 func Load() *Config {
 	return &Config{
 		Port:        getEnv("PORT", "8080"),
-		DatabaseURL: getEnv("DATABASE_URL", "server=localhost;database=clinic_management;trusted_connection=true"),
+		DatabaseURL: getEnv("DATABASE_URL", "sqlserver://localhost?database=ClinicManagement&trusted_connection=yes"),
 		JWTSecret:   getEnv("JWT_SECRET", "your-secret-key-change-in-production"),
 	}
 }

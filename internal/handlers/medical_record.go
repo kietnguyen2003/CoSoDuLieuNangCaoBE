@@ -29,14 +29,14 @@ func (h *MedicalRecordHandler) GetMedicalRecords(c *gin.Context) {
 	switch userType.(string) {
 	case "CUSTOMER":
 		query = `
-			SELECT h.MaHoSo, h.MaCustomer, h.MaBacSi, h.MaPhongKham, 
-			       h.NgayKham, h.TrieuChung, h.ChanDoan, h.HuongDanDieuTri, 
+			SELECT h.MaHoSo, h.maCustomer, h.MaBacSi, h.MaPhongKham, 
+			       h.NgayKham, h.TrieuChung, h.ChanDoan, h.Huongdan, 
 			       h.MaICD10, h.NgayTaiKham,
 			       u.HoTen as TenBacSi, p.TenPhongKham
-			FROM HOSOBENH h
-			JOIN [USER] u ON h.MaBacSi = u.MaUser
+			FROM HOSO h
+			JOIN [USER] u ON h.MaBacSi = u.userId
 			JOIN PHONGKHAM p ON h.MaPhongKham = p.MaPhongKham
-			WHERE h.MaCustomer = ?
+			WHERE h.MaCustomer = @p1
 			ORDER BY h.NgayKham DESC
 		`
 		args = append(args, userID)
@@ -44,41 +44,41 @@ func (h *MedicalRecordHandler) GetMedicalRecords(c *gin.Context) {
 	case "DOCTOR":
 		query = `
 			SELECT h.MaHoSo, h.MaCustomer, h.MaBacSi, h.MaPhongKham, 
-			       h.NgayKham, h.TrieuChung, h.ChanDoan, h.HuongDanDieuTri, 
+			       h.NgayKham, h.TrieuChung, h.ChanDoan, h.huongdan, 
 			       h.MaICD10, h.NgayTaiKham,
 			       u.HoTen as TenKhachHang, p.TenPhongKham
-			FROM HOSOBENH h
-			JOIN [USER] u ON h.MaCustomer = u.MaUser
+			FROM HOSO h
+			JOIN [USER] u ON h.MaCustomer = u.userID
 			JOIN PHONGKHAM p ON h.MaPhongKham = p.MaPhongKham
-			WHERE h.MaBacSi = ?
+			WHERE h.MaBacSi = @p1
 		`
 		args = append(args, userID)
-		
+
 		if customerID != "" {
-			query += " AND h.MaCustomer = ?"
+			query += " AND h.MaCustomer = @p2"
 			args = append(args, customerID)
 		}
-		
+
 		query += " ORDER BY h.NgayKham DESC"
 
 	default:
 		query = `
 			SELECT h.MaHoSo, h.MaCustomer, h.MaBacSi, h.MaPhongKham, 
-			       h.NgayKham, h.TrieuChung, h.ChanDoan, h.HuongDanDieuTri, 
+			       h.NgayKham, h.TrieuChung, h.ChanDoan, h.huongdan, 
 			       h.MaICD10, h.NgayTaiKham,
 			       uc.HoTen as TenKhachHang, ud.HoTen as TenBacSi, p.TenPhongKham
-			FROM HOSOBENH h
-			JOIN [USER] uc ON h.MaCustomer = uc.MaUser
-			JOIN [USER] ud ON h.MaBacSi = ud.MaUser
+			FROM HOSO h
+			JOIN [USER] uc ON h.MaCustomer = uc.userID
+			JOIN [USER] ud ON h.MaBacSi = ud.userID
 			JOIN PHONGKHAM p ON h.MaPhongKham = p.MaPhongKham
 			WHERE 1=1
 		`
-		
+
 		if customerID != "" {
-			query += " AND h.MaCustomer = ?"
+			query += " AND h.MaCustomer = @p1"
 			args = append(args, customerID)
 		}
-		
+
 		query += " ORDER BY h.NgayKham DESC"
 	}
 
@@ -168,19 +168,19 @@ func (h *MedicalRecordHandler) GetMedicalRecord(c *gin.Context) {
 		       h.NgayKham, h.TrieuChung, h.ChanDoan, h.HuongDanDieuTri, 
 		       h.MaICD10, h.NgayTaiKham,
 		       uc.HoTen as TenKhachHang, ud.HoTen as TenBacSi, p.TenPhongKham
-		FROM HOSOBENH h
+		FROM HOSO h
 		JOIN [USER] uc ON h.MaCustomer = uc.MaUser
 		JOIN [USER] ud ON h.MaBacSi = ud.MaUser
 		JOIN PHONGKHAM p ON h.MaPhongKham = p.MaPhongKham
-		WHERE h.MaHoSo = ?
+		WHERE h.MaHoSo = @p1
 	`
 	args := []interface{}{recordID}
 
 	if userType.(string) == "CUSTOMER" {
-		query += " AND h.MaCustomer = ?"
+		query += " AND h.MaCustomer = @p1"
 		args = append(args, userID)
 	} else if userType.(string) == "DOCTOR" {
-		query += " AND h.MaBacSi = ?"
+		query += " AND h.MaBacSi = @p1"
 		args = append(args, userID)
 	}
 
@@ -229,40 +229,40 @@ func (h *MedicalRecordHandler) GetMedicalRecord(c *gin.Context) {
 	prescriptionsQuery := `
 		SELECT d.MaDonThuoc, d.NgayKeDon, d.GhiChu
 		FROM DONTHUOC d
-		WHERE d.MaHoSo = ?
+		WHERE d.MaHoSo = @p1
 	`
-	
+
 	prescRows, err := h.db.Query(prescriptionsQuery, recordID)
 	if err == nil {
 		defer prescRows.Close()
 		var prescriptions []map[string]interface{}
-		
+
 		for prescRows.Next() {
 			var prescription map[string]interface{} = make(map[string]interface{})
 			var maDonThuoc, ngayKeDon, ghiChu interface{}
-			
+
 			err := prescRows.Scan(&maDonThuoc, &ngayKeDon, &ghiChu)
 			if err == nil {
 				prescription["ma_don_thuoc"] = maDonThuoc
 				prescription["ngay_ke_don"] = ngayKeDon
 				prescription["ghi_chu"] = ghiChu
-				
+
 				medicinesQuery := `
 					SELECT t.TenThuoc, ct.SoLuong, ct.CachDung, ct.GhiChu
 					FROM CHITIETDONTHUOC ct
 					JOIN THUOC t ON ct.MaThuoc = t.MaThuoc
-					WHERE ct.MaDonThuoc = ?
+					WHERE ct.MaDonThuoc = @p1
 				`
-				
+
 				medRows, medErr := h.db.Query(medicinesQuery, maDonThuoc)
 				if medErr == nil {
 					defer medRows.Close()
 					var medicines []map[string]interface{}
-					
+
 					for medRows.Next() {
 						var medicine map[string]interface{} = make(map[string]interface{})
 						var tenThuoc, soLuong, cachDung, ghiChuThuoc interface{}
-						
+
 						err := medRows.Scan(&tenThuoc, &soLuong, &cachDung, &ghiChuThuoc)
 						if err == nil {
 							medicine["ten_thuoc"] = tenThuoc
@@ -274,7 +274,7 @@ func (h *MedicalRecordHandler) GetMedicalRecord(c *gin.Context) {
 					}
 					prescription["thuoc"] = medicines
 				}
-				
+
 				prescriptions = append(prescriptions, prescription)
 			}
 		}
@@ -284,18 +284,18 @@ func (h *MedicalRecordHandler) GetMedicalRecord(c *gin.Context) {
 	testResultsQuery := `
 		SELECT MaXetNghiem, LoaiXetNghiem, NgayXetNghiem, KetQua, GhiChu, FileDinhKem
 		FROM XETNGHIEM
-		WHERE MaHoSo = ?
+		WHERE MaHoSo = @p1
 	`
-	
+
 	testRows, err := h.db.Query(testResultsQuery, recordID)
 	if err == nil {
 		defer testRows.Close()
 		var testResults []map[string]interface{}
-		
+
 		for testRows.Next() {
 			var testResult map[string]interface{} = make(map[string]interface{})
 			var maXetNghiem, loaiXetNghiem, ngayXetNghiem, ketQua, ghiChu, fileDinhKem interface{}
-			
+
 			err := testRows.Scan(&maXetNghiem, &loaiXetNghiem, &ngayXetNghiem, &ketQua, &ghiChu, &fileDinhKem)
 			if err == nil {
 				testResult["ma_xet_nghiem"] = maXetNghiem
@@ -330,13 +330,13 @@ func (h *MedicalRecordHandler) CreateMedicalRecord(c *gin.Context) {
 	}
 
 	var req struct {
-		MaCustomer          string  `json:"ma_customer" binding:"required"`
-		MaPhongKham         string  `json:"ma_phong_kham" binding:"required"`
-		TrieuChung          *string `json:"trieu_chung"`
-		ChanDoan            *string `json:"chan_doan"`
-		HuongDanDieuTri     *string `json:"huong_dan_dieu_tri"`
-		MaICD10             *string `json:"ma_icd10"`
-		NgayTaiKham         *string `json:"ngay_tai_kham"`
+		MaCustomer      string  `json:"ma_customer" binding:"required"`
+		MaPhongKham     string  `json:"ma_phong_kham" binding:"required"`
+		TrieuChung      *string `json:"trieu_chung"`
+		ChanDoan        *string `json:"chan_doan"`
+		HuongDanDieuTri *string `json:"huong_dan_dieu_tri"`
+		MaICD10         *string `json:"ma_icd10"`
+		NgayTaiKham     *string `json:"ngay_tai_kham"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -349,13 +349,13 @@ func (h *MedicalRecordHandler) CreateMedicalRecord(c *gin.Context) {
 	}
 
 	recordID := utils.GenerateMedicalRecordID()
-	
+
 	_, err := h.db.Exec(`
-		INSERT INTO HOSOBENH (MaHoSo, MaCustomer, MaBacSi, MaPhongKham, NgayKham, 
+		INSERT INTO HOSO (MaHoSo, MaCustomer, MaBacSi, MaPhongKham, NgayKham, 
 		                      TrieuChung, ChanDoan, HuongDanDieuTri, MaICD10, NgayTaiKham)
 		VALUES (?, ?, ?, ?, GETDATE(), ?, ?, ?, ?, ?)
-	`, recordID, req.MaCustomer, userID, req.MaPhongKham, 
-	   req.TrieuChung, req.ChanDoan, req.HuongDanDieuTri, req.MaICD10, req.NgayTaiKham)
+	`, recordID, req.MaCustomer, userID, req.MaPhongKham,
+		req.TrieuChung, req.ChanDoan, req.HuongDanDieuTri, req.MaICD10, req.NgayTaiKham)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
@@ -389,8 +389,8 @@ func (h *MedicalRecordHandler) UpdateMedicalRecord(c *gin.Context) {
 	}
 
 	var currentDoctorID string
-	err := h.db.QueryRow("SELECT MaBacSi FROM HOSOBENH WHERE MaHoSo = ?", recordID).Scan(&currentDoctorID)
-	
+	err := h.db.QueryRow("SELECT MaBacSi FROM HOSO WHERE MaHoSo = @p1", recordID).Scan(&currentDoctorID)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, models.APIResponse{
@@ -437,7 +437,7 @@ func (h *MedicalRecordHandler) UpdateMedicalRecord(c *gin.Context) {
 	defer tx.Rollback()
 
 	if trieuChung, exists := updateData["trieu_chung"]; exists {
-		_, err = tx.Exec("UPDATE HOSOBENH SET TrieuChung = ? WHERE MaHoSo = ?", trieuChung, recordID)
+		_, err = tx.Exec("UPDATE HOSO SET TrieuChung = @p1 WHERE MaHoSo = @p1", trieuChung, recordID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -449,7 +449,7 @@ func (h *MedicalRecordHandler) UpdateMedicalRecord(c *gin.Context) {
 	}
 
 	if chanDoan, exists := updateData["chan_doan"]; exists {
-		_, err = tx.Exec("UPDATE HOSOBENH SET ChanDoan = ? WHERE MaHoSo = ?", chanDoan, recordID)
+		_, err = tx.Exec("UPDATE HOSO SET ChanDoan = @p1 WHERE MaHoSo = @p1", chanDoan, recordID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -461,7 +461,7 @@ func (h *MedicalRecordHandler) UpdateMedicalRecord(c *gin.Context) {
 	}
 
 	if huongDanDieuTri, exists := updateData["huong_dan_dieu_tri"]; exists {
-		_, err = tx.Exec("UPDATE HOSOBENH SET HuongDanDieuTri = ? WHERE MaHoSo = ?", huongDanDieuTri, recordID)
+		_, err = tx.Exec("UPDATE HOSO SET HuongDanDieuTri = @p1 WHERE MaHoSo = @p1", huongDanDieuTri, recordID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -473,7 +473,7 @@ func (h *MedicalRecordHandler) UpdateMedicalRecord(c *gin.Context) {
 	}
 
 	if maICD10, exists := updateData["ma_icd10"]; exists {
-		_, err = tx.Exec("UPDATE HOSOBENH SET MaICD10 = ? WHERE MaHoSo = ?", maICD10, recordID)
+		_, err = tx.Exec("UPDATE HOSO SET MaICD10 = @p1 WHERE MaHoSo = @p1", maICD10, recordID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -485,7 +485,7 @@ func (h *MedicalRecordHandler) UpdateMedicalRecord(c *gin.Context) {
 	}
 
 	if ngayTaiKham, exists := updateData["ngay_tai_kham"]; exists {
-		_, err = tx.Exec("UPDATE HOSOBENH SET NgayTaiKham = ? WHERE MaHoSo = ?", ngayTaiKham, recordID)
+		_, err = tx.Exec("UPDATE HOSO SET NgayTaiKham = @p1 WHERE MaHoSo = @p1", ngayTaiKham, recordID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,

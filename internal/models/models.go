@@ -5,177 +5,177 @@ import (
 )
 
 type User struct {
-	MaUser           string     `json:"ma_user" db:"MaUser"`
-	HoTen            string     `json:"ho_ten" db:"HoTen"`
-	SoDienThoai      *string    `json:"so_dien_thoai" db:"SoDienThoai"`
-	Email            *string    `json:"email" db:"Email"`
-	TenDangNhap      string     `json:"ten_dang_nhap" db:"TenDangNhap"`
-	MatKhau          string     `json:"-" db:"MatKhau"`
-	TrangThai        string     `json:"trang_thai" db:"TrangThai"`
-	NgayTao          time.Time  `json:"ngay_tao" db:"NgayTao"`
-	LanDangNhapCuoi  *time.Time `json:"lan_dang_nhap_cuoi" db:"LanDangNhapCuoi"`
+	MaUser      string    `json:"ma_user" db:"userID"`
+	HoTen       string    `json:"ho_ten" db:"hoTen"`
+	SoDienThoai *string   `json:"so_dien_thoai" db:"soDienThoai"`
+	Email       *string   `json:"email" db:"email"`
+	TenDangNhap string    `json:"ten_dang_nhap" db:"username"`
+	MatKhau     string    `json:"-" db:"password"`
+	TrangThai   string    `json:"trang_thai" db:"status"`
+	NgayTao     time.Time `json:"ngay_tao" db:"createdAt"`
+	Role        string    `json:"role" db:"role"`
 }
 
 type Customer struct {
 	User
-	NgaySinh    *time.Time `json:"ngay_sinh" db:"NgaySinh"`
-	GioiTinh    *string    `json:"gioi_tinh" db:"GioiTinh"`
-	DiaChi      *string    `json:"dia_chi" db:"DiaChi"`
-	NgayDangKy  time.Time  `json:"ngay_dang_ky" db:"NgayDangKy"`
-	MaBaoHiem   *string    `json:"ma_bao_hiem" db:"MaBaoHiem"`
+	NgaySinh   *time.Time `json:"ngay_sinh" db:"ngaySinh"`
+	GioiTinh   *string    `json:"gioi_tinh" db:"gioiTinh"`
+	DiaChi     *string    `json:"dia_chi" db:"diaChi"`
+	NgayDangKy time.Time  `json:"ngay_dang_ky" db:"createdAt"`
+	MaBaoHiem  *string    `json:"ma_bao_hiem" db:"maBaoHiem"`
 }
 
 type Doctor struct {
 	User
-	ChuyenKhoa           *string `json:"chuyen_khoa" db:"ChuyenKhoa"`
-	NamKinhNghiem        *int    `json:"nam_kinh_nghiem" db:"NamKinhNghiem"`
-	BangCap              *string `json:"bang_cap" db:"BangCap"`
-	SoGiayPhepHanhNghe   *string `json:"so_giay_phep_hanh_nghe" db:"SoGiayPhepHanhNghe"`
+	ChuyenKhoa         *string `json:"chuyen_khoa" db:"chuyenKhoa"`
+	NamKinhNghiem      *int    `json:"nam_kinh_nghiem" db:"namKinhNghiem"`
+	BangCap            *string `json:"bang_cap" db:"bangCap"`
+	SoGiayPhepHanhNghe *string `json:"so_giay_phep_hanh_nghe" db:"maGiayPhep"`
 }
 
 type Receptionist struct {
 	User
-	MaPhongKham string  `json:"ma_phong_kham" db:"MaPhongKham"`
-	LuongCoBan  float64 `json:"luong_co_ban" db:"LuongCoBan"`
-	NgayVaoLam  *time.Time `json:"ngay_vao_lam" db:"NgayVaoLam"`
+	MaPhongKham string     `json:"ma_phong_kham" db:"maPhongKham"`
+	LuongCoBan  float64    `json:"luong_co_ban" db:"luongCoBan"`
+	NgayVaoLam  *time.Time `json:"ngay_vao_lam" db:"ngayVaoLam"`
 }
 
 type Accountant struct {
 	User
-	LuongCoBan  float64 `json:"luong_co_ban" db:"LuongCoBan"`
-	NgayVaoLam  *time.Time `json:"ngay_vao_lam" db:"NgayVaoLam"`
-	ChuyenMon   *string `json:"chuyen_mon" db:"ChuyenMon"`
+	LuongCoBan float64    `json:"luong_co_ban" db:"luongCoBan"`
+	NgayVaoLam *time.Time `json:"ngay_vao_lam" db:"ngayVaoLam"`
+	ChuyenMon  *string    `json:"chuyen_mon" db:"chuyenMon"`
 }
 
 type ClinicManager struct {
 	User
-	MaPhongKham string  `json:"ma_phong_kham" db:"MaPhongKham"`
-	LuongCoBan  float64 `json:"luong_co_ban" db:"LuongCoBan"`
-	NgayVaoLam  *time.Time `json:"ngay_vao_lam" db:"NgayVaoLam"`
+	MaPhongKham string     `json:"ma_phong_kham" db:"maPhongKham"`
+	LuongCoBan  float64    `json:"luong_co_ban" db:"luongCoBan"`
+	NgayVaoLam  *time.Time `json:"ngay_vao_lam" db:"ngayVaoLam"`
 }
 
 type OperationManager struct {
 	User
-	ChucVu         *string `json:"chuc_vu" db:"ChucVu"`
-	KhuVucPhuTrach *string `json:"khu_vuc_phu_trach" db:"KhuVucPhuTrach"`
-	LuongCoBan     float64 `json:"luong_co_ban" db:"LuongCoBan"`
-	NgayVaoLam     *time.Time `json:"ngay_vao_lam" db:"NgayVaoLam"`
+	ChucVu         *string    `json:"chuc_vu" db:"chucVu"`
+	KhuVucPhuTrach *string    `json:"khu_vuc_phu_trach" db:"khuVucPhuTrach"`
+	LuongCoBan     float64    `json:"luong_co_ban" db:"luongCoBan"`
+	NgayVaoLam     *time.Time `json:"ngay_vao_lam" db:"ngayVaoLam"`
 }
 
 type Clinic struct {
-	MaPhongKham   string  `json:"ma_phong_kham" db:"MaPhongKham"`
-	TenPhongKham  string  `json:"ten_phong_kham" db:"TenPhongKham"`
-	DiaChi        *string `json:"dia_chi" db:"DiaChi"`
-	SoDienThoai   *string `json:"so_dien_thoai" db:"SoDienThoai"`
-	Email         *string `json:"email" db:"Email"`
+	MaPhongKham  string  `json:"ma_phong_kham" db:"maPhongKham"`
+	TenPhongKham string  `json:"ten_phong_kham" db:"tenPhongKham"`
+	DiaChi       *string `json:"dia_chi" db:"diaChi"`
+	SoDienThoai  *string `json:"so_dien_thoai" db:"soDienThoai"`
+	Email        *string `json:"email" db:"email"`
 }
 
 type Appointment struct {
-	MaLichKham   string    `json:"ma_lich_kham" db:"MaLichKham"`
-	MaCustomer   string    `json:"ma_customer" db:"MaCustomer"`
-	MaBacSi      string    `json:"ma_bac_si" db:"MaBacSi"`
-	MaPhongKham  string    `json:"ma_phong_kham" db:"MaPhongKham"`
-	NgayGioKham  time.Time `json:"ngay_gio_kham" db:"NgayGioKham"`
-	TrangThai    string    `json:"trang_thai" db:"TrangThai"`
-	GhiChu       *string   `json:"ghi_chu" db:"GhiChu"`
-	NgayDat      time.Time `json:"ngay_dat" db:"NgayDat"`
+	MaLichKham  string    `json:"ma_lich_kham" db:"maLichKham"`
+	MaCustomer  string    `json:"ma_customer" db:"maCustomer"`
+	MaBacSi     string    `json:"ma_bac_si" db:"maBacSi"`
+	MaPhongKham string    `json:"ma_phong_kham" db:"maPhongKham"`
+	NgayGioKham time.Time `json:"ngay_gio_kham" db:"maGioKham"`
+	TrangThai   string    `json:"trang_thai" db:"trangThai"`
+	GhiChu      *string   `json:"ghi_chu" db:"ghiChu"`
+	NgayDat     time.Time `json:"ngay_dat" db:"createdAt"`
 }
 
 type WorkSchedule struct {
-	MaLichLamViec string    `json:"ma_lich_lam_viec" db:"MaLichLamViec"`
-	MaBacSi       string    `json:"ma_bac_si" db:"MaBacSi"`
-	MaPhongKham   string    `json:"ma_phong_kham" db:"MaPhongKham"`
-	NgayLamViec   time.Time `json:"ngay_lam_viec" db:"NgayLamViec"`
-	GioBatDau     string    `json:"gio_bat_dau" db:"GioBatDau"`
-	GioKetThuc    string    `json:"gio_ket_thuc" db:"GioKetThuc"`
-	TrangThai     string    `json:"trang_thai" db:"TrangThai"`
+	MaLichLamViec string    `json:"ma_lich_lam_viec" db:"maLichLamViec"`
+	MaBacSi       string    `json:"ma_bac_si" db:"maBacSi"`
+	MaPhongKham   string    `json:"ma_phong_kham" db:"maPhongKham"`
+	NgayLamViec   time.Time `json:"ngay_lam_viec" db:"ngayLamViec"`
+	GioBatDau     string    `json:"gio_bat_dau" db:"gioBatDau"`
+	GioKetThuc    string    `json:"gio_ket_thuc" db:"gioKetThuc"`
+	TrangThai     string    `json:"trang_thai" db:"trangThai"`
 }
 
 type MedicalRecord struct {
-	MaHoSo              string     `json:"ma_ho_so" db:"MaHoSo"`
-	MaCustomer          string     `json:"ma_customer" db:"MaCustomer"`
-	MaBacSi             string     `json:"ma_bac_si" db:"MaBacSi"`
-	MaPhongKham         string     `json:"ma_phong_kham" db:"MaPhongKham"`
-	NgayKham            time.Time  `json:"ngay_kham" db:"NgayKham"`
-	TrieuChung          *string    `json:"trieu_chung" db:"TrieuChung"`
-	ChanDoan            *string    `json:"chan_doan" db:"ChanDoan"`
-	HuongDanDieuTri     *string    `json:"huong_dan_dieu_tri" db:"HuongDanDieuTri"`
-	MaICD10             *string    `json:"ma_icd10" db:"MaICD10"`
-	NgayTaiKham         *time.Time `json:"ngay_tai_kham" db:"NgayTaiKham"`
+	MaHoSo          string     `json:"ma_ho_so" db:"maHoSo"`
+	MaCustomer      string     `json:"ma_customer" db:"maCustomer"`
+	MaBacSi         string     `json:"ma_bac_si" db:"maBacSi"`
+	MaPhongKham     string     `json:"ma_phong_kham" db:"maPhongKham"`
+	NgayKham        time.Time  `json:"ngay_kham" db:"ngayKham"`
+	TrieuChung      *string    `json:"trieu_chung" db:"trieuChung"`
+	ChanDoan        *string    `json:"chan_doan" db:"ChanDoan"`
+	HuongDanDieuTri *string    `json:"huong_dan_dieu_tri" db:"huongDanDieuTri"`
+	MaICD10         *string    `json:"ma_icd10" db:"maICD10"`
+	NgayTaiKham     *time.Time `json:"ngay_tai_kham" db:"ngayTaiKham"`
 }
 
 type Medicine struct {
-	MaThuoc   string  `json:"ma_thuoc" db:"MaThuoc"`
-	TenThuoc  string  `json:"ten_thuoc" db:"TenThuoc"`
-	DonVi     *string `json:"don_vi" db:"DonVi"`
+	MaThuoc   string  `json:"ma_thuoc" db:"maThuoc"`
+	TenThuoc  string  `json:"ten_thuoc" db:"tenThuoc"`
+	DonVi     *string `json:"don_vi" db:"donVi"`
 	Gia       float64 `json:"gia" db:"Gia"`
-	CongDung  *string `json:"cong_dung" db:"CongDung"`
-	LieuLuong *string `json:"lieu_luong" db:"LieuLuong"`
+	CongDung  *string `json:"cong_dung" db:"congDung"`
+	LieuLuong *string `json:"lieu_luong" db:"lieuLuong"`
 }
 
 type Prescription struct {
-	MaDonThuoc string     `json:"ma_don_thuoc" db:"MaDonThuoc"`
-	MaHoSo     string     `json:"ma_ho_so" db:"MaHoSo"`
-	NgayKeDon  time.Time  `json:"ngay_ke_don" db:"NgayKeDon"`
-	GhiChu     *string    `json:"ghi_chu" db:"GhiChu"`
+	MaDonThuoc string    `json:"ma_don_thuoc" db:"maDonThuoc"`
+	MaHoSo     string    `json:"ma_ho_so" db:"maHoSo"`
+	NgayKeDon  time.Time `json:"ngay_ke_don" db:"ngayKeDon"`
+	GhiChu     *string   `json:"ghi_chu" db:"ghiChu"`
 }
 
 type PrescriptionDetail struct {
-	MaDonThuoc string  `json:"ma_don_thuoc" db:"MaDonThuoc"`
-	MaThuoc    string  `json:"ma_thuoc" db:"MaThuoc"`
-	SoLuong    int     `json:"so_luong" db:"SoLuong"`
-	CachDung   *string `json:"cach_dung" db:"CachDung"`
-	GhiChu     *string `json:"ghi_chu" db:"GhiChu"`
+	MaDonThuoc string  `json:"ma_don_thuoc" db:"maDonThuoc"`
+	MaThuoc    string  `json:"ma_thuoc" db:"maThuoc"`
+	SoLuong    int     `json:"so_luong" db:"soLuong"`
+	CachDung   *string `json:"cach_dung" db:"cachDung"`
+	GhiChu     *string `json:"ghi_chu" db:"ghiChu"`
 }
 
 type TestResult struct {
-	MaXetNghiem    string     `json:"ma_xet_nghiem" db:"MaXetNghiem"`
-	MaHoSo         string     `json:"ma_ho_so" db:"MaHoSo"`
-	LoaiXetNghiem  *string    `json:"loai_xet_nghiem" db:"LoaiXetNghiem"`
-	NgayXetNghiem  *time.Time `json:"ngay_xet_nghiem" db:"NgayXetNghiem"`
-	KetQua         *string    `json:"ket_qua" db:"KetQua"`
-	GhiChu         *string    `json:"ghi_chu" db:"GhiChu"`
-	FileDinhKem    *string    `json:"file_dinh_kem" db:"FileDinhKem"`
+	MaXetNghiem   string     `json:"ma_xet_nghiem" db:"maXetNghiem"`
+	MaHoSo        string     `json:"ma_ho_so" db:"maHoSo"`
+	LoaiXetNghiem *string    `json:"loai_xet_nghiem" db:"loaiXetNghiem"`
+	NgayXetNghiem *time.Time `json:"ngay_xet_nghiem" db:"ngayXetNghiem"`
+	KetQua        *string    `json:"ket_qua" db:"ketQua"`
+	GhiChu        *string    `json:"ghi_chu" db:"ghiChu"`
+	FileDinhKem   *string    `json:"file_dinh_kem" db:"FileDinhKem"`
 }
 
 type MedicalImage struct {
-	MaHinhAnh     string    `json:"ma_hinh_anh" db:"MaHinhAnh"`
-	MaHoSo        string    `json:"ma_ho_so" db:"MaHoSo"`
-	TenFile       *string   `json:"ten_file" db:"TenFile"`
-	DuongDanFile  *string   `json:"duong_dan_file" db:"DuongDanFile"`
-	MoTa          *string   `json:"mo_ta" db:"MoTa"`
-	NgayChup      time.Time `json:"ngay_chup" db:"NgayChup"`
+	MaHinhAnh    string    `json:"ma_hinh_anh" db:"maHinhAnh"`
+	MaHoSo       string    `json:"ma_ho_so" db:"maHoSo"`
+	TenFile      *string   `json:"ten_file" db:"tenFile"`
+	DuongDanFile *string   `json:"duong_dan_file" db:"DuongDanFile"`
+	MoTa         *string   `json:"mo_ta" db:"MoTa"`
+	NgayChup     time.Time `json:"ngay_chup" db:"ngayChup"`
 }
 
 type Payment struct {
-	MaThanhToan           string    `json:"ma_thanh_toan" db:"MaThanhToan"`
-	MaLichKham            string    `json:"ma_lich_kham" db:"MaLichKham"`
-	TongTien              float64   `json:"tong_tien" db:"TongTien"`
-	NgayThanhToan         time.Time `json:"ngay_thanh_toan" db:"NgayThanhToan"`
-	PhuongThucThanhToan   *string   `json:"phuong_thuc_thanh_toan" db:"PhuongThucThanhToan"`
-	TrangThai             string    `json:"trang_thai" db:"TrangThai"`
+	MaThanhToan         string    `json:"ma_thanh_toan" db:"maThanhToan"`
+	MaLichKham          string    `json:"ma_lich_kham" db:"maLichKham"`
+	TongTien            float64   `json:"tong_tien" db:"tongTien"`
+	NgayThanhToan       time.Time `json:"ngay_thanh_toan" db:"ngayThanhToan"`
+	PhuongThucThanhToan *string   `json:"phuong_thuc_thanh_toan" db:"phuongThucThanhToan"`
+	TrangThai           string    `json:"trang_thai" db:"trangThai"`
 }
 
 type Salary struct {
-	MaLuong        string    `json:"ma_luong" db:"MaLuong"`
-	MaUser         string    `json:"ma_user" db:"MaUser"`
-	Thang          int       `json:"thang" db:"Thang"`
-	Nam            int       `json:"nam" db:"Nam"`
-	LuongCoBan     float64   `json:"luong_co_ban" db:"LuongCoBan"`
-	ThuLao         float64   `json:"thu_lao" db:"ThuLao"`
-	Thuong         float64   `json:"thuong" db:"Thuong"`
-	TongLuong      *float64  `json:"tong_luong" db:"TongLuong"`
-	NgayTinhLuong  time.Time `json:"ngay_tinh_luong" db:"NgayTinhLuong"`
+	MaLuong       string    `json:"ma_luong" db:"maLuong"`
+	MaUser        string    `json:"ma_user" db:"maUser"`
+	Thang         int       `json:"thang" db:"thang"`
+	Nam           int       `json:"nam" db:"nam"`
+	LuongCoBan    float64   `json:"luong_co_ban" db:"luongCoBan"`
+	ThuLao        float64   `json:"thu_lao" db:"thuLao"`
+	Thuong        float64   `json:"thuong" db:"thuong"`
+	TongLuong     *float64  `json:"tong_luong" db:"tongLuong"`
+	NgayTinhLuong time.Time `json:"ngay_tinh_luong" db:"ngayTinhLuong"`
 }
 
 type Report struct {
-	MaBaoCao      string     `json:"ma_bao_cao" db:"MaBaoCao"`
-	MaUser        string     `json:"ma_user" db:"MaUser"`
-	LoaiBaoCao    *string    `json:"loai_bao_cao" db:"LoaiBaoCao"`
-	TuNgay        *time.Time `json:"tu_ngay" db:"TuNgay"`
+	MaBaoCao      string     `json:"ma_bao_cao" db:"maBaoCao"`
+	MaUser        string     `json:"ma_user" db:"maUser"`
+	LoaiBaoCao    *string    `json:"loai_bao_cao" db:"loaiBaoCao"`
+	TuNgay        *time.Time `json:"tu_ngay" db:"tuNgay"`
 	DenNgay       *time.Time `json:"den_ngay" db:"DenNgay"`
-	NoiDung       *string    `json:"noi_dung" db:"NoiDung"`
-	NgayTaoBaoCao time.Time  `json:"ngay_tao_bao_cao" db:"NgayTaoBaoCao"`
+	NoiDung       *string    `json:"noi_dung" db:"noiDung"`
+	NgayTaoBaoCao time.Time  `json:"ngay_tao_bao_cao" db:"ngayTaoBaoCao"`
 }
 
 type AuthRequest struct {
@@ -215,11 +215,11 @@ type ResetPasswordRequest struct {
 }
 
 type PasswordReset struct {
-	ID          string    `json:"id" db:"ID"`
-	UserID      string    `json:"user_id" db:"UserID"`
-	Email       string    `json:"email" db:"Email"`
-	ResetCode   string    `json:"reset_code" db:"ResetCode"`
-	IsUsed      bool      `json:"is_used" db:"IsUsed"`
-	ExpiresAt   time.Time `json:"expires_at" db:"ExpiresAt"`
-	CreatedAt   time.Time `json:"created_at" db:"CreatedAt"`
+	ID        string    `json:"id" db:"ID"`
+	UserID    string    `json:"user_id" db:"UserID"`
+	Email     string    `json:"email" db:"email"`
+	ResetCode string    `json:"reset_code" db:"ResetCode"`
+	IsUsed    bool      `json:"is_used" db:"IsUsed"`
+	ExpiresAt time.Time `json:"expires_at" db:"ExpiresAt"`
+	CreatedAt time.Time `json:"created_at" db:"CreatedAt"`
 }

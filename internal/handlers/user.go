@@ -46,16 +46,16 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 func (h *UserHandler) getCustomerProfile(c *gin.Context, userID string) {
 	var customer models.Customer
 	query := `
-		SELECT u.MaUser, u.HoTen, u.SoDienThoai, u.Email, u.TenDangNhap, u.TrangThai, u.NgayTao, u.LanDangNhapCuoi,
-		       c.NgaySinh, c.GioiTinh, c.DiaChi, c.NgayDangKy, c.MaBaoHiem
+		SELECT u.userID, u.hoTen, u.soDienThoai, u.email, u.username, u.status, u.createdAt, u.role,
+		       c.ngaySinh, c.gioiTinh, c.diaChi, c.createdAt, c.maBaoHiem
 		FROM [USER] u 
-		JOIN CUSTOMER c ON u.MaUser = c.MaUser 
-		WHERE u.MaUser = ?
+		JOIN CUSTOMER c ON u.userID = c.maUser 
+		WHERE u.userID = @p1
 	`
 
 	err := h.db.QueryRow(query, userID).Scan(
 		&customer.MaUser, &customer.HoTen, &customer.SoDienThoai, &customer.Email,
-		&customer.TenDangNhap, &customer.TrangThai, &customer.NgayTao, &customer.LanDangNhapCuoi,
+		&customer.TenDangNhap, &customer.TrangThai, &customer.NgayTao, &customer.Role,
 		&customer.NgaySinh, &customer.GioiTinh, &customer.DiaChi, &customer.NgayDangKy, &customer.MaBaoHiem,
 	)
 
@@ -78,16 +78,16 @@ func (h *UserHandler) getCustomerProfile(c *gin.Context, userID string) {
 func (h *UserHandler) getDoctorProfile(c *gin.Context, userID string) {
 	var doctor models.Doctor
 	query := `
-		SELECT u.MaUser, u.HoTen, u.SoDienThoai, u.Email, u.TenDangNhap, u.TrangThai, u.NgayTao, u.LanDangNhapCuoi,
-		       d.ChuyenKhoa, d.NamKinhNghiem, d.BangCap, d.SoGiayPhepHanhNghe
+		SELECT u.userID, u.hoTen, u.soDienThoai, u.email, u.username, u.status, u.createdAt, u.role,
+		       d.chuyenKhoa, d.namKinhNghiem, d.bangCap, d.maGiayPhep
 		FROM [USER] u 
-		JOIN BACSI d ON u.MaUser = d.MaUser 
-		WHERE u.MaUser = ?
+		JOIN BACSI d ON u.userID = d.maUser 
+		WHERE u.userID = @p1
 	`
 
 	err := h.db.QueryRow(query, userID).Scan(
 		&doctor.MaUser, &doctor.HoTen, &doctor.SoDienThoai, &doctor.Email,
-		&doctor.TenDangNhap, &doctor.TrangThai, &doctor.NgayTao, &doctor.LanDangNhapCuoi,
+		&doctor.TenDangNhap, &doctor.TrangThai, &doctor.NgayTao, &doctor.Role,
 		&doctor.ChuyenKhoa, &doctor.NamKinhNghiem, &doctor.BangCap, &doctor.SoGiayPhepHanhNghe,
 	)
 
@@ -110,16 +110,16 @@ func (h *UserHandler) getDoctorProfile(c *gin.Context, userID string) {
 func (h *UserHandler) getReceptionistProfile(c *gin.Context, userID string) {
 	var receptionist models.Receptionist
 	query := `
-		SELECT u.MaUser, u.HoTen, u.SoDienThoai, u.Email, u.TenDangNhap, u.TrangThai, u.NgayTao, u.LanDangNhapCuoi,
-		       r.MaPhongKham, r.LuongCoBan, r.NgayVaoLam
+		SELECT u.userID, u.hoTen, u.soDienThoai, u.email, u.username, u.status, u.createdAt, u.role,
+		       r.maPhongKham, r.luongCoBan, r.ngayVaoLam
 		FROM [USER] u 
-		JOIN LETAN r ON u.MaUser = r.MaUser 
-		WHERE u.MaUser = ?
+		JOIN LETAN r ON u.userID = r.maUser 
+		WHERE u.userID = @p1
 	`
 
 	err := h.db.QueryRow(query, userID).Scan(
 		&receptionist.MaUser, &receptionist.HoTen, &receptionist.SoDienThoai, &receptionist.Email,
-		&receptionist.TenDangNhap, &receptionist.TrangThai, &receptionist.NgayTao, &receptionist.LanDangNhapCuoi,
+		&receptionist.TenDangNhap, &receptionist.TrangThai, &receptionist.NgayTao, &receptionist.Role,
 		&receptionist.MaPhongKham, &receptionist.LuongCoBan, &receptionist.NgayVaoLam,
 	)
 
@@ -142,16 +142,16 @@ func (h *UserHandler) getReceptionistProfile(c *gin.Context, userID string) {
 func (h *UserHandler) getAccountantProfile(c *gin.Context, userID string) {
 	var accountant models.Accountant
 	query := `
-		SELECT u.MaUser, u.HoTen, u.SoDienThoai, u.Email, u.TenDangNhap, u.TrangThai, u.NgayTao, u.LanDangNhapCuoi,
-		       a.LuongCoBan, a.NgayVaoLam, a.ChuyenMon
+		SELECT u.userID, u.hoTen, u.soDienThoai, u.email, u.username, u.status, u.createdAt, u.role,
+		       a.luongCoBan, a.chuyenMon
 		FROM [USER] u 
-		JOIN KETOAN a ON u.MaUser = a.MaUser 
-		WHERE u.MaUser = ?
+		JOIN KETOAN a ON u.userID = a.maUser 
+		WHERE u.userID = @p1
 	`
 
 	err := h.db.QueryRow(query, userID).Scan(
 		&accountant.MaUser, &accountant.HoTen, &accountant.SoDienThoai, &accountant.Email,
-		&accountant.TenDangNhap, &accountant.TrangThai, &accountant.NgayTao, &accountant.LanDangNhapCuoi,
+		&accountant.TenDangNhap, &accountant.TrangThai, &accountant.NgayTao, &accountant.Role,
 		&accountant.LuongCoBan, &accountant.NgayVaoLam, &accountant.ChuyenMon,
 	)
 
@@ -174,16 +174,16 @@ func (h *UserHandler) getAccountantProfile(c *gin.Context, userID string) {
 func (h *UserHandler) getClinicManagerProfile(c *gin.Context, userID string) {
 	var manager models.ClinicManager
 	query := `
-		SELECT u.MaUser, u.HoTen, u.SoDienThoai, u.Email, u.TenDangNhap, u.TrangThai, u.NgayTao, u.LanDangNhapCuoi,
-		       m.MaPhongKham, m.LuongCoBan, m.NgayVaoLam
+		SELECT u.userID, u.hoTen, u.soDienThoai, u.email, u.username, u.status, u.createdAt, u.role,
+		       m.maPhongKham, m.luongCoBan, m.ngayVaoLam
 		FROM [USER] u 
-		JOIN QUANLYPHONGKHAM m ON u.MaUser = m.MaUser 
-		WHERE u.MaUser = ?
+		JOIN QUANLYPHONGKHAM m ON u.userID = m.maUser 
+		WHERE u.userID = @p1
 	`
 
 	err := h.db.QueryRow(query, userID).Scan(
 		&manager.MaUser, &manager.HoTen, &manager.SoDienThoai, &manager.Email,
-		&manager.TenDangNhap, &manager.TrangThai, &manager.NgayTao, &manager.LanDangNhapCuoi,
+		&manager.TenDangNhap, &manager.TrangThai, &manager.NgayTao, &manager.Role,
 		&manager.MaPhongKham, &manager.LuongCoBan, &manager.NgayVaoLam,
 	)
 
@@ -206,16 +206,16 @@ func (h *UserHandler) getClinicManagerProfile(c *gin.Context, userID string) {
 func (h *UserHandler) getOperationManagerProfile(c *gin.Context, userID string) {
 	var opManager models.OperationManager
 	query := `
-		SELECT u.MaUser, u.HoTen, u.SoDienThoai, u.Email, u.TenDangNhap, u.TrangThai, u.NgayTao, u.LanDangNhapCuoi,
-		       o.ChucVu, o.KhuVucPhuTrach, o.LuongCoBan, o.NgayVaoLam
+		SELECT u.userID, u.hoTen, u.soDienThoai, u.email, u.username, u.status, u.createdAt, u.role,
+		       o.chucVu, o.khuVucPhuTrach, o.luongCoBan, o.ngayVaoLam
 		FROM [USER] u 
-		JOIN BANDIEUHANH o ON u.MaUser = o.MaUser 
-		WHERE u.MaUser = ?
+		JOIN BANDIEUHANH o ON u.userID = o.maUser 
+		WHERE u.userID = @p1
 	`
 
 	err := h.db.QueryRow(query, userID).Scan(
 		&opManager.MaUser, &opManager.HoTen, &opManager.SoDienThoai, &opManager.Email,
-		&opManager.TenDangNhap, &opManager.TrangThai, &opManager.NgayTao, &opManager.LanDangNhapCuoi,
+		&opManager.TenDangNhap, &opManager.TrangThai, &opManager.NgayTao, &opManager.Role,
 		&opManager.ChucVu, &opManager.KhuVucPhuTrach, &opManager.LuongCoBan, &opManager.NgayVaoLam,
 	)
 
@@ -268,7 +268,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		}
 
 		var existingUserID string
-		err := h.db.QueryRow("SELECT MaUser FROM [USER] WHERE Email = ? AND MaUser != ?", emailStr, userID).Scan(&existingUserID)
+		err := h.db.QueryRow("SELECT userID FROM [USER] WHERE email = @p1 AND userID != ?", emailStr, userID).Scan(&existingUserID)
 		if err == nil {
 			c.JSON(http.StatusConflict, models.APIResponse{
 				Success: false,
@@ -290,7 +290,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	defer tx.Rollback()
 
 	if hoTen, exists := updateData["ho_ten"]; exists && hoTen != "" {
-		_, err = tx.Exec("UPDATE [USER] SET HoTen = ? WHERE MaUser = ?", hoTen, userID)
+		_, err = tx.Exec("UPDATE [USER] SET hoTen = @p1 WHERE userID = @p1", hoTen, userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -308,7 +308,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		} else {
 			phoneValue = soDienThoai
 		}
-		_, err = tx.Exec("UPDATE [USER] SET SoDienThoai = ? WHERE MaUser = ?", phoneValue, userID)
+		_, err = tx.Exec("UPDATE [USER] SET soDienThoai = @p1 WHERE userID = @p1", phoneValue, userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -326,11 +326,29 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		} else {
 			emailValue = email
 		}
-		_, err = tx.Exec("UPDATE [USER] SET Email = ? WHERE MaUser = ?", emailValue, userID)
+		_, err = tx.Exec("UPDATE [USER] SET email = @p1 WHERE userID = @p1", emailValue, userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
 				Message: "Failed to update email",
+				Error:   err.Error(),
+			})
+			return
+		}
+	}
+
+	if maBaoHiem, exists := updateData["ma_bao_hiem"]; exists {
+		var insuranceValue interface{}
+		if maBaoHiem == "" {
+			insuranceValue = nil
+		} else {
+			insuranceValue = maBaoHiem
+		}
+		_, err := tx.Exec("UPDATE CUSTOMER SET maBaoHiem = @p1 WHERE maUser = @p2", insuranceValue, userID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.APIResponse{
+				Success: false,
+				Message: "Failed to update ma_bao_hiem",
 				Error:   err.Error(),
 			})
 			return
@@ -373,7 +391,7 @@ func (h *UserHandler) updateCustomerSpecificFields(tx *sql.Tx, userID string, up
 		} else {
 			dateValue = ngaySinh
 		}
-		_, err := tx.Exec("UPDATE CUSTOMER SET NgaySinh = ? WHERE MaUser = ?", dateValue, userID)
+		_, err := tx.Exec("UPDATE CUSTOMER SET ngaySinh = @p1 WHERE maUser = @p1", dateValue, userID)
 		if err != nil {
 			return err
 		}
@@ -386,7 +404,7 @@ func (h *UserHandler) updateCustomerSpecificFields(tx *sql.Tx, userID string, up
 		} else {
 			genderValue = gioiTinh
 		}
-		_, err := tx.Exec("UPDATE CUSTOMER SET GioiTinh = ? WHERE MaUser = ?", genderValue, userID)
+		_, err := tx.Exec("UPDATE CUSTOMER SET gioiTinh = @p1 WHERE maUser = @p1", genderValue, userID)
 		if err != nil {
 			return err
 		}
@@ -399,7 +417,7 @@ func (h *UserHandler) updateCustomerSpecificFields(tx *sql.Tx, userID string, up
 		} else {
 			addressValue = diaChi
 		}
-		_, err := tx.Exec("UPDATE CUSTOMER SET DiaChi = ? WHERE MaUser = ?", addressValue, userID)
+		_, err := tx.Exec("UPDATE CUSTOMER SET diaChi = @p1 WHERE maUser = @p1", addressValue, userID)
 		if err != nil {
 			return err
 		}
@@ -412,7 +430,7 @@ func (h *UserHandler) updateCustomerSpecificFields(tx *sql.Tx, userID string, up
 		} else {
 			insuranceValue = maBaoHiem
 		}
-		_, err := tx.Exec("UPDATE CUSTOMER SET MaBaoHiem = ? WHERE MaUser = ?", insuranceValue, userID)
+		_, err := tx.Exec("UPDATE CUSTOMER SET maBaoHiem = @p1 WHERE maUser = @p1", insuranceValue, userID)
 		if err != nil {
 			return err
 		}
@@ -423,7 +441,7 @@ func (h *UserHandler) updateCustomerSpecificFields(tx *sql.Tx, userID string, up
 
 func (h *UserHandler) ChangePassword(c *gin.Context) {
 	userID, _ := c.Get("user_id")
-	
+
 	var req struct {
 		OldPassword string `json:"old_password" binding:"required"`
 		NewPassword string `json:"new_password" binding:"required"`
@@ -464,7 +482,7 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 
 	var currentHash string
 	var userStatus string
-	err := h.db.QueryRow("SELECT MatKhau, TrangThai FROM [USER] WHERE MaUser = ?", userID).Scan(&currentHash, &userStatus)
+	err := h.db.QueryRow("SELECT password, status FROM [USER] WHERE userID = @p1", userID).Scan(&currentHash, &userStatus)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.APIResponse{
 			Success: false,
@@ -499,7 +517,7 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	_, err = h.db.Exec("UPDATE [USER] SET MatKhau = ? WHERE MaUser = ?", newHash, userID)
+	_, err = h.db.Exec("UPDATE [USER] SET password = @p1 WHERE userID = @p1", newHash, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
 			Success: false,

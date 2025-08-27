@@ -12,11 +12,12 @@ import (
 )
 
 type AuthHandler struct {
-	db *sql.DB
+	db        *sql.DB
+	jwtSecret string
 }
 
-func NewAuthHandler(db *sql.DB) *AuthHandler {
-	return &AuthHandler{db: db}
+func NewAuthHandler(db *sql.DB, jwtSecret string) *AuthHandler {
+	return &AuthHandler{db: db, jwtSecret: jwtSecret}
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
@@ -39,13 +40,13 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	var user models.User
-	query := `SELECT MaUser, HoTen, SoDienThoai, Email, TenDangNhap, MatKhau, TrangThai, NgayTao, LanDangNhapCuoi 
-			  FROM [USER] WHERE TenDangNhap = ? AND TrangThai = 'ACTIVE'`
-	
+	query := `SELECT userID, HoTen, SoDienThoai, Email, username, password, status, createdAt, role 
+			  FROM [USER] WHERE username = @p1 AND status = 'ACTIVE'`
+
 	err := h.db.QueryRow(query, req.TenDangNhap).Scan(
 		&user.MaUser, &user.HoTen, &user.SoDienThoai, &user.Email,
 		&user.TenDangNhap, &user.MatKhau, &user.TrangThai,
-		&user.NgayTao, &user.LanDangNhapCuoi,
+		&user.NgayTao, &user.Role,
 	)
 
 	if err != nil {
@@ -64,8 +65,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	userType := h.getUserType(user.MaUser)
-	token, err := middleware.GenerateToken(user.MaUser, user.TenDangNhap, userType, "your-secret-key-change-in-production")
+	token, err := middleware.GenerateToken(user.MaUser, user.TenDangNhap, user.Role, h.jwtSecret)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
 			Success: false,
@@ -75,21 +75,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := middleware.GenerateRefreshToken(user.MaUser, "your-secret-key-change-in-production")
+	refreshToken, err := middleware.GenerateRefreshToken(user.MaUser, h.jwtSecret)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
 			Success: false,
 			Message: "Failed to generate refresh token",
-			Error:   err.Error(),
-		})
-		return
-	}
-
-	_, err = h.db.Exec("UPDATE [USER] SET LanDangNhapCuoi = GETDATE() WHERE MaUser = ?", user.MaUser)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.APIResponse{
-			Success: false,
-			Message: "Failed to update last login time",
 			Error:   err.Error(),
 		})
 		return
@@ -136,7 +126,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	var existingUser string
-	err := h.db.QueryRow("SELECT MaUser FROM [USER] WHERE TenDangNhap = ?", req.TenDangNhap).Scan(&existingUser)
+	err := h.db.QueryRow("SELECT userID FROM [USER] WHERE username = @p1", req.TenDangNhap).Scan(&existingUser)
 	if err == nil {
 		c.JSON(http.StatusConflict, models.APIResponse{
 			Success: false,
@@ -146,7 +136,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	if req.Email != "" {
-		err = h.db.QueryRow("SELECT MaUser FROM [USER] WHERE Email = ?", req.Email).Scan(&existingUser)
+		err = h.db.QueryRow("SELECT userID FROM [USER] WHERE Email = @p1", req.Email).Scan(&existingUser)
 		if err == nil {
 			c.JSON(http.StatusConflict, models.APIResponse{
 				Success: false,
@@ -166,8 +156,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	userID := utils.GenerateUserID()
-	
+	userID := utils.GenerateUserID("CUSTOMER")
+
 	tx, err := h.db.Begin()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
@@ -188,8 +178,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	_, err = tx.Exec(`
-		INSERT INTO [USER] (MaUser, HoTen, SoDienThoai, Email, TenDangNhap, MatKhau, TrangThai, NgayTao)
-		VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', GETDATE())
+		INSERT INTO [USER] (userID, HoTen, SoDienThoai, Email, username, password, status, createdAt, role)
+		VALUES (@p1, @p2, @p3, @p4, @p5, @p6, 'ACTIVE', GETDATE(), 'CUSTOMER')
 	`, userID, req.HoTen, phone, email, req.TenDangNhap, hashedPassword)
 
 	if err != nil {
@@ -202,8 +192,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	_, err = tx.Exec(`
-		INSERT INTO CUSTOMER (MaUser, NgayDangKy)
-		VALUES (?, GETDATE())
+		INSERT INTO CUSTOMER (MaUser, createdAt)
+		VALUES (@p1, GETDATE())
 	`, userID)
 
 	if err != nil {
@@ -277,7 +267,7 @@ func (h *AuthHandler) ForgotPassword(c *gin.Context) {
 
 	resetCode := utils.GenerateResetCode()
 	resetID := utils.GeneratePasswordResetID()
-	
+
 	tx, err := h.db.Begin()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{

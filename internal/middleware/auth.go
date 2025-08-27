@@ -44,7 +44,7 @@ func GenerateRefreshToken(userID, jwtSecret string) (string, error) {
 	return token.SignedString([]byte(jwtSecret))
 }
 
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(jwtSecret string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -63,7 +63,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenString := bearerToken[1]
 		claims := &Claims{}
 
-		jwtSecret := "your-secret-key-change-in-production"
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(jwtSecret), nil
 		})
@@ -74,9 +73,9 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userID", claims.UserID)
-		c.Set("username", claims.Username) 
-		c.Set("role", claims.UserType)
+		c.Set("user_id", claims.UserID)
+		c.Set("username", claims.Username)
+		c.Set("user_type", claims.UserType)
 		c.Next()
 	}
 }

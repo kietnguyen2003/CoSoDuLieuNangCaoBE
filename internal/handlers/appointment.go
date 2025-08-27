@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 
 	"clinic-management/internal/models"
@@ -22,7 +25,6 @@ func (h *AppointmentHandler) GetAppointments(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	userType, _ := c.Get("user_type")
 	status := c.Query("status")
-	date := c.Query("date")
 
 	var query string
 	var args []interface{}
@@ -30,52 +32,45 @@ func (h *AppointmentHandler) GetAppointments(c *gin.Context) {
 	switch userType.(string) {
 	case "CUSTOMER":
 		query = `
-			SELECT l.MaLichKham, l.MaCustomer, l.MaBacSi, l.MaPhongKham, 
-			       l.NgayGioKham, l.TrangThai, l.GhiChu, l.NgayDat,
-			       u.HoTen as TenBacSi, p.TenPhongKham
+			SELECT l.maLichKham, l.maCustomer, l.maBacSi, l.maPhongKham
+			       , l.trangThai, l.ghiChu, l.createdAt, l.ngaygiokham,
+			       u.hoTen as TenBacSi, p.tenPhongKham
 			FROM LICHKHAM l
-			JOIN [USER] u ON l.MaBacSi = u.MaUser
-			JOIN PHONGKHAM p ON l.MaPhongKham = p.MaPhongKham
-			WHERE l.MaCustomer = ?
+			JOIN [USER] u ON l.maBacSi = u.userID
+			JOIN PHONGKHAM p ON l.maPhongKham = p.maPhongKham
+			WHERE l.maCustomer = @p1
 		`
 		args = append(args, userID)
 
 	case "DOCTOR":
 		query = `
-			SELECT l.MaLichKham, l.MaCustomer, l.MaBacSi, l.MaPhongKham, 
-			       l.NgayGioKham, l.TrangThai, l.GhiChu, l.NgayDat,
-			       u.HoTen as TenKhachHang, p.TenPhongKham
+			SELECT l.maLichKham, l.maCustomer, l.maBacSi, l.maPhongKham
+			       , l.trangThai, l.ghiChu, l.createdAt, l.ngaygiokham,
+			       u.hoTen as TenBacSi, p.tenPhongKham
 			FROM LICHKHAM l
-			JOIN [USER] u ON l.MaCustomer = u.MaUser
-			JOIN PHONGKHAM p ON l.MaPhongKham = p.MaPhongKham
-			WHERE l.MaBacSi = ?
+			JOIN [USER] u ON l.maBacSi = u.userID
+			JOIN PHONGKHAM p ON l.maPhongKham = p.maPhongKham
+			WHERE l.maBacSi = @p1
 		`
 		args = append(args, userID)
 
 	default:
 		query = `
-			SELECT l.MaLichKham, l.MaCustomer, l.MaBacSi, l.MaPhongKham, 
-			       l.NgayGioKham, l.TrangThai, l.GhiChu, l.NgayDat,
-			       uc.HoTen as TenKhachHang, ud.HoTen as TenBacSi, p.TenPhongKham
+			SELECT l.maLichKham, l.maCustomer, l.maBacSi, l.maPhongKham
+			       , l.trangThai, l.ghiChu, l.createdAt, l.ngaygiokham,
+			       uc.hoTen as TenKhachHang, ud.hoTen as TenBacSi, p.tenPhongKham
 			FROM LICHKHAM l
-			JOIN [USER] uc ON l.MaCustomer = uc.MaUser
-			JOIN [USER] ud ON l.MaBacSi = ud.MaUser
-			JOIN PHONGKHAM p ON l.MaPhongKham = p.MaPhongKham
+			JOIN [USER] uc ON l.maCustomer = uc.userID
+			JOIN [USER] ud ON l.maBacSi = ud.userID
+			JOIN PHONGKHAM p ON l.maPhongKham = p.maPhongKham
 			WHERE 1=1
 		`
 	}
 
 	if status != "" {
-		query += " AND l.TrangThai = ?"
+		query += " AND l.trangThai = @p" + fmt.Sprintf("%d", len(args)+1)
 		args = append(args, status)
 	}
-
-	if date != "" {
-		query += " AND CAST(l.NgayGioKham AS DATE) = ?"
-		args = append(args, date)
-	}
-
-	query += " ORDER BY l.NgayGioKham DESC"
 
 	rows, err := h.db.Query(query, args...)
 	if err != nil {
@@ -92,12 +87,12 @@ func (h *AppointmentHandler) GetAppointments(c *gin.Context) {
 	for rows.Next() {
 		appointment := make(map[string]interface{})
 		var maLichKham, maCustomer, maBacSi, maPhongKham, trangThai string
-		var ngayGioKham, ngayDat interface{}
+		var ngayDat, ngaygiokham interface{}
 		var ghiChu, tenPerson, tenPhongKham interface{}
 
 		if userType.(string) == "CUSTOMER" || userType.(string) == "DOCTOR" {
 			err := rows.Scan(&maLichKham, &maCustomer, &maBacSi, &maPhongKham,
-				&ngayGioKham, &trangThai, &ghiChu, &ngayDat, &tenPerson, &tenPhongKham)
+				&trangThai, &ghiChu, &ngayDat, &ngaygiokham, &tenPerson, &tenPhongKham)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, models.APIResponse{
 					Success: false,
@@ -109,7 +104,7 @@ func (h *AppointmentHandler) GetAppointments(c *gin.Context) {
 		} else {
 			var tenKhachHang, tenBacSi interface{}
 			err := rows.Scan(&maLichKham, &maCustomer, &maBacSi, &maPhongKham,
-				&ngayGioKham, &trangThai, &ghiChu, &ngayDat, &tenKhachHang, &tenBacSi, &tenPhongKham)
+				&trangThai, &ghiChu, &ngayDat, &ngaygiokham, &tenKhachHang, &tenBacSi, &tenPhongKham)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, models.APIResponse{
 					Success: false,
@@ -126,10 +121,10 @@ func (h *AppointmentHandler) GetAppointments(c *gin.Context) {
 		appointment["ma_customer"] = maCustomer
 		appointment["ma_bac_si"] = maBacSi
 		appointment["ma_phong_kham"] = maPhongKham
-		appointment["ngay_gio_kham"] = ngayGioKham
 		appointment["trang_thai"] = trangThai
 		appointment["ghi_chu"] = ghiChu
 		appointment["ngay_dat"] = ngayDat
+		appointment["ngay_gio_kham"] = ngaygiokham
 		appointment["ten_phong_kham"] = tenPhongKham
 
 		if userType.(string) == "CUSTOMER" {
@@ -152,18 +147,41 @@ func (h *AppointmentHandler) CreateAppointment(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	userType, _ := c.Get("user_type")
 
-	var req struct {
-		MaBacSi     string `json:"ma_bac_si" binding:"required"`
-		MaPhongKham string `json:"ma_phong_kham" binding:"required"`
-		NgayGioKham string `json:"ngay_gio_kham" binding:"required"`
-		GhiChu      string `json:"ghi_chu"`
-	}
+	// Use a map instead of struct for debugging
+	var req map[string]interface{}
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	// Debug: Log raw request body first
+	rawData, _ := c.GetRawData()
+	log.Printf("DEBUG: Raw JSON received: %s", string(rawData))
+	
+	// Manual JSON parsing using map
+	if err := json.Unmarshal(rawData, &req); err != nil {
+		log.Printf("DEBUG: JSON unmarshal error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, models.APIResponse{
 			Success: false,
-			Message: "Invalid request format",
+			Message: "Invalid JSON format",
 			Error:   err.Error(),
+		})
+		return
+	}
+
+	log.Printf("DEBUG: Parsed map: %+v", req)
+
+	// Extract values from map
+	maBacSi, _ := req["ma_bac_si"].(string)
+	maPhongKham, _ := req["ma_phong_kham"].(string)
+	ngayGioKham, _ := req["ngay_gio_kham"].(string)
+	ghiChu, _ := req["ghi_chu"].(string)
+
+	// Debug logging
+	log.Printf("DEBUG: Creating appointment - UserID: %v, UserType: %v, DoctorID: '%s', ClinicID: '%s', DateTime: '%s'", 
+		userID, userType, maBacSi, maPhongKham, ngayGioKham)
+
+	// Manual validation
+	if maBacSi == "" || maPhongKham == "" || ngayGioKham == "" {
+		c.JSON(http.StatusBadRequest, models.APIResponse{
+			Success: false,
+			Message: "Missing required fields: ma_bac_si, ma_phong_kham, and ngay_gio_kham are required",
 		})
 		return
 	}
@@ -182,8 +200,8 @@ func (h *AppointmentHandler) CreateAppointment(c *gin.Context) {
 	var count int
 	err := h.db.QueryRow(`
 		SELECT COUNT(*) FROM LICHKHAM 
-		WHERE MaBacSi = ? AND NgayGioKham = ? AND TrangThai NOT IN ('HUY_LICH', 'HOAN_THANH')
-	`, req.MaBacSi, req.NgayGioKham).Scan(&count)
+		WHERE maBacSi = @p1 AND ngayGioKham = @p2 AND trangThai NOT IN ('CANCELLED', 'COMPLETED')
+	`, maBacSi, ngayGioKham).Scan(&count)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
@@ -203,11 +221,11 @@ func (h *AppointmentHandler) CreateAppointment(c *gin.Context) {
 	}
 
 	appointmentID := utils.GenerateAppointmentID()
-	
+
 	_, err = h.db.Exec(`
-		INSERT INTO LICHKHAM (MaLichKham, MaCustomer, MaBacSi, MaPhongKham, NgayGioKham, TrangThai, GhiChu, NgayDat)
-		VALUES (?, ?, ?, ?, ?, 'DAT_LICH', ?, GETDATE())
-	`, appointmentID, customerID, req.MaBacSi, req.MaPhongKham, req.NgayGioKham, req.GhiChu)
+		INSERT INTO LICHKHAM (maLichKham, maCustomer, maBacSi, maPhongKham, ngayGioKham, trangThai, ghiChu, createdAt)
+		VALUES (@p1, @p2, @p3, @p4, @p5, 'SCHEDULED', @p6, GETDATE())
+	`, appointmentID, customerID, maBacSi, maPhongKham, ngayGioKham, ghiChu)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
@@ -233,22 +251,22 @@ func (h *AppointmentHandler) GetAppointment(c *gin.Context) {
 	userType, _ := c.Get("user_type")
 
 	query := `
-		SELECT l.MaLichKham, l.MaCustomer, l.MaBacSi, l.MaPhongKham, 
-		       l.NgayGioKham, l.TrangThai, l.GhiChu, l.NgayDat,
-		       uc.HoTen as TenKhachHang, ud.HoTen as TenBacSi, p.TenPhongKham
+		SELECT l.maLichKham, l.maCustomer, l.maBacSi, l.maPhongKham, 
+		       l.ngayGioKham, l.trangThai, l.ghiChu, l.createdAt,
+		       uc.hoTen as TenKhachHang, ud.hoTen as TenBacSi, p.tenPhongKham
 		FROM LICHKHAM l
-		JOIN [USER] uc ON l.MaCustomer = uc.MaUser
-		JOIN [USER] ud ON l.MaBacSi = ud.MaUser
-		JOIN PHONGKHAM p ON l.MaPhongKham = p.MaPhongKham
-		WHERE l.MaLichKham = ?
+		JOIN [USER] uc ON l.maCustomer = uc.userID
+		JOIN [USER] ud ON l.maBacSi = ud.userID
+		JOIN PHONGKHAM p ON l.maPhongKham = p.maPhongKham
+		WHERE l.maLichKham = @p1
 	`
 	args := []interface{}{appointmentID}
 
 	if userType.(string) == "CUSTOMER" {
-		query += " AND l.MaCustomer = ?"
+		query += " AND l.maCustomer = @p2"
 		args = append(args, userID)
 	} else if userType.(string) == "DOCTOR" {
-		query += " AND l.MaBacSi = ?"
+		query += " AND l.maBacSi = @p2"
 		args = append(args, userID)
 	}
 
@@ -314,9 +332,9 @@ func (h *AppointmentHandler) UpdateAppointment(c *gin.Context) {
 	}
 
 	var currentCustomerID, currentDoctorID string
-	err := h.db.QueryRow("SELECT MaCustomer, MaBacSi FROM LICHKHAM WHERE MaLichKham = ?", appointmentID).
+	err := h.db.QueryRow("SELECT maCustomer, maBacSi FROM LICHKHAM WHERE maLichKham = @p1", appointmentID).
 		Scan(&currentCustomerID, &currentDoctorID)
-	
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, models.APIResponse{
@@ -361,7 +379,7 @@ func (h *AppointmentHandler) UpdateAppointment(c *gin.Context) {
 	defer tx.Rollback()
 
 	if ngayGioKham, exists := updateData["ngay_gio_kham"]; exists {
-		_, err = tx.Exec("UPDATE LICHKHAM SET NgayGioKham = ? WHERE MaLichKham = ?", ngayGioKham, appointmentID)
+		_, err = tx.Exec("UPDATE LICHKHAM SET ngayGioKham = @p1 WHERE maLichKham = @p2", ngayGioKham, appointmentID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -373,7 +391,7 @@ func (h *AppointmentHandler) UpdateAppointment(c *gin.Context) {
 	}
 
 	if trangThai, exists := updateData["trang_thai"]; exists {
-		_, err = tx.Exec("UPDATE LICHKHAM SET TrangThai = ? WHERE MaLichKham = ?", trangThai, appointmentID)
+		_, err = tx.Exec("UPDATE LICHKHAM SET trangThai = @p1 WHERE maLichKham = @p2", trangThai, appointmentID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -385,7 +403,7 @@ func (h *AppointmentHandler) UpdateAppointment(c *gin.Context) {
 	}
 
 	if ghiChu, exists := updateData["ghi_chu"]; exists {
-		_, err = tx.Exec("UPDATE LICHKHAM SET GhiChu = ? WHERE MaLichKham = ?", ghiChu, appointmentID)
+		_, err = tx.Exec("UPDATE LICHKHAM SET ghiChu = @p1 WHERE maLichKham = @p2", ghiChu, appointmentID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.APIResponse{
 				Success: false,
@@ -417,8 +435,8 @@ func (h *AppointmentHandler) CancelAppointment(c *gin.Context) {
 	userType, _ := c.Get("user_type")
 
 	var customerID string
-	err := h.db.QueryRow("SELECT MaCustomer FROM LICHKHAM WHERE MaLichKham = ?", appointmentID).Scan(&customerID)
-	
+	err := h.db.QueryRow("SELECT maCustomer FROM LICHKHAM WHERE maLichKham = @p1", appointmentID).Scan(&customerID)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, models.APIResponse{
@@ -443,7 +461,7 @@ func (h *AppointmentHandler) CancelAppointment(c *gin.Context) {
 		return
 	}
 
-	_, err = h.db.Exec("UPDATE LICHKHAM SET TrangThai = 'HUY_LICH' WHERE MaLichKham = ?", appointmentID)
+	_, err = h.db.Exec("UPDATE LICHKHAM SET trangThai = 'CANCELLED' WHERE maLichKham = @p1", appointmentID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.APIResponse{
 			Success: false,
